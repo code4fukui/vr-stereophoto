@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<title>VR-stereophoto</title>
+<!DOCTYPE html>
+<body style="margin:0">
+<div id="container"></div>
+
+<div id="info" style="position: absolute; top: .5em; left: .5em; background-color: rgba(255, 255, 255, .8); padding: .3em;">
+  plate with <a href="https://threejs.org">three.js</a> forked from <a href=https://notetoself-dy.com/three-js-practice3/>ジオメトリの種類 Three.jsの使い方を勉強してみた</a>
+</div>
+
+<!-- Import maps polyfill -->
+<!-- Remove this when import maps will be widely supported -->
+<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://code4fukui.github.io/three.js/build/three.module.js",
+      "three/addons/": "https://code4fukui.github.io/three.js/examples/jsm/"
+    }
+  }
+  </script>
+
+<script type="module">
+import * as THREE from 'three';
+//import { VRButton } from 'three/addons/webxr/VRButton.js';
+import { ARButton } from 'three/addons/webxr/ARButton.js';
+
+// レンダラーを作成
+//const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // alpha for AR
+//renderer.setClearColor(new THREE.Color(0xFDFDFD));
+//sceneの大きさの通知
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+
+// WebXR
+renderer.xr.enabled = true;
+renderer.xr.setReferenceSpaceType("local");
+//container.appendChild( renderer.domElement );
+//document.body.appendChild( VRButton.createButton( renderer ) );
+document.body.appendChild(ARButton.createButton(renderer));
+
+// シーンを作成
+const scene = new THREE.Scene();
+
+// カメラを作成
+const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 2000);
+
+// 平面の作成
+const geometry = new THREE.PlaneGeometry(1, 1);
+const texture = new THREE.TextureLoader().load("./img/cc0/image_anonyme_exposition_universelle_de_1900_kiosque_de_vente_du_catalogue_general_officiel_de_lexposition_le_guide_lemercier._ph14310_998513.jpg");
+const material = new THREE.MeshBasicMaterial({ map: texture });
+//const material = new THREE.MeshToonMaterial({ color: 0x6699FF }) 
+const plane = new THREE.Mesh(geometry, material);
+// planeの配置
+//plane.rotation.y = 0.08 * Math.PI;
+plane.position.x = 0;
+plane.position.y = 0;
+plane.position.z = -1;
+scene.add(plane);
+
+// スポッドライト(色, 光の強さ, 距離, 照射角, ボケ具合, 減衰率)
+const spotLight = new THREE.SpotLight(0xffffff);
+spotLight.position.set(1, 1, 4.5);
+spotLight.castShadow = true;
+scene.add(spotLight);
+
+document.getElementById("container").appendChild(renderer.domElement);
+          
+// 毎フレーム時に実行されるループイベントです
+function tick() {
+//  box.rotation.y += 0.01;
+}
+
+function onWindowResize() {
+camera.aspect = window.innerWidth / window.innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize( window.innerWidth, window.innerHeight );
+}
+window.addEventListener("resize", onWindowResize );
+
+function animate() {
+  renderer.setAnimationLoop(render);
+}
+
+function render() {
+  tick();
+  renderer.render(scene, camera);
+}
+animate();
+
+</script>
+</body>
+
+</html>

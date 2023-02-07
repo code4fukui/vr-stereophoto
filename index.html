@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<title>AR/VRで見る1948年「福井地震航空ステレオ写真」 with three.js</title>
+<!DOCTYPE html>
+<body style="margin:0; background-color: #333;">
+<div id="container"></div>
+
+<div id="info" style="position: absolute; top: .5em; left: .5em; background-color: rgba(255, 255, 255, .8); padding: .3em;">
+  AR/VRで見る1948年「福井地震航空ステレオ写真」 with <a href="https://threejs.org" style="color: black !important;">three.js</a>
+</div>
+
+<!-- Import maps polyfill -->
+<!-- Remove this when import maps will be widely supported -->
+<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://code4fukui.github.io/three.js/build/three.module.js",
+      "three/addons/": "https://code4fukui.github.io/three.js/examples/jsm/"
+    }
+  }
+  </script>
+
+<script type="module">
+import * as THREE from 'three';
+//import { VRButton } from 'three/addons/webxr/VRButton.js';
+import { ARButton } from 'three/addons/webxr/ARButton.js';
+
+//const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // alpha for AR
+//renderer.setClearColor(new THREE.Color(0xFDFDFD));
+//sceneの大きさの通知
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+
+// WebXR
+renderer.xr.enabled = true;
+renderer.xr.setReferenceSpaceType("local");
+//container.appendChild( renderer.domElement );
+//document.body.appendChild( VRButton.createButton( renderer ) );
+document.body.appendChild(ARButton.createButton(renderer));
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 100);
+
+camera.layers.enable(1); // render left view when no stereo available
+
+const imgs = [
+  "img/fukui-eq/A2-2-Anaglyph-cyan.jpg",
+  "img/fukui-eq/A2-2-Anaglyph-red.jpg",
+];
+for (let i = 1; i <= 2; i++) {
+  const geometry = new THREE.PlaneGeometry(1, 1);
+  const texture = new THREE.TextureLoader().load(imgs[i - 1]);
+  const material = new THREE.MeshBasicMaterial({ map: texture });
+  //const material = new THREE.MeshToonMaterial({ color: 0x6699FF }) 
+  const plane = new THREE.Mesh(geometry, material);
+  // planeの配置
+  //plane.rotation.y = 0.08 * Math.PI;
+  plane.layers.set(i); // display in left eye only
+  plane.position.x = 0;
+  plane.position.y = 0;
+  plane.position.z = -1;
+  scene.add(plane);
+}
+
+/*// スポッドライト(色, 光の強さ, 距離, 照射角, ボケ具合, 減衰率)
+const spotLight = new THREE.SpotLight(0xffffff);
+spotLight.position.set(1, 1, 4.5);
+spotLight.castShadow = true;
+scene.add(spotLight);
+*/
+
+container.appendChild(renderer.domElement);
+          
+function tick() {
+}
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize( window.innerWidth, window.innerHeight );
+}
+window.addEventListener("resize", onWindowResize );
+
+function animate() {
+  renderer.setAnimationLoop(render);
+}
+
+function render() {
+  tick();
+  renderer.render(scene, camera);
+}
+animate();
+
+</script>
+</body>
+
+</html>
