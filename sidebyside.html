@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<title>Nreal 3Dモードで見る1948年「福井地震航空ステレオ写真」</title>
+<!DOCTYPE html>
+<body>
+<div id="container">
+  <div id="left">
+    <img src="img/fukui-eq/A2-2-Anaglyph-cyan.jpg"><br>
+    <div class="info">
+      Nreal 3Dモードで見る1948年「福井地震航空ステレオ写真」
+    </div>
+  </div>
+  <div id="right">
+    <img src="img/fukui-eq/A2-2-Anaglyph-red.jpg"><br>
+    <div class="info">
+      Nreal 3Dモードで見る1948年「福井地震航空ステレオ写真」
+    </div>
+  </div>
+</div>
+
+<style>
+body {
+  margin: 0;
+  background-color: black;
+}
+#container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100vw;
+  text-align: center;
+}
+img {
+  width: 54.5%;
+}
+.info {
+  color: white;
+  /*
+  style="position: absolute; top: .5em; left: .5em; background-color: rgba(255, 255, 255, .8); padding: .3em;">
+  */
+}
+</style>
+
+<script type="module">
+container.onclick = () => {
+  container.requestFullscreen();
+}
+</script>
+
+</body>
+
+</html>
